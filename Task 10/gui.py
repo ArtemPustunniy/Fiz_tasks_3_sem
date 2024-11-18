@@ -14,24 +14,19 @@ class ChargeFieldSimulator(QMainWindow):
         self.resize(800, 600)
         self.plot_callback = plot_callback
 
-        # Центрируем окно
         self.center_window()
 
-        # Основной виджет
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
-        # Главный Layout
         self.layout = QVBoxLayout(self.central_widget)
 
-        # Заголовок
         self.header_label = QLabel("Ввод данных")
         self.header_label.setFont(QFont("Arial", 16, QFont.Bold))
         self.header_label.setStyleSheet("color: #006400;")
         self.header_label.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.header_label)
 
-        # Количество зарядов
         self.num_charges_label = QLabel("Количество зарядов:")
         self.num_charges_input = QLineEdit()
         self.num_charges_input.setPlaceholderText("Введите число")
@@ -47,41 +42,30 @@ class ChargeFieldSimulator(QMainWindow):
 
         self.layout.addLayout(num_charges_layout)
 
-        # Поля ввода для зарядов
         self.charges_layout = QGridLayout()
         self.layout.addLayout(self.charges_layout)
 
-        # Кнопка запуска
         self.simulate_button = QPushButton("Запустить симуляцию")
         self.simulate_button.setStyleSheet("background-color: #006400; color: white; font-size: 14px;")
         self.simulate_button.clicked.connect(self.validate_and_simulate)
         self.layout.addWidget(self.simulate_button)
 
-        # Список для хранения полей ввода зарядов
         self.charge_entries = []
 
-        # Стили
         self.setStyleSheet("background-color: #f7f7f7;")
 
     def center_window(self):
-        """
-        Центрирует окно на экране.
-        """
         screen_geometry = QDesktopWidget().availableGeometry().center()
         frame_geometry = self.frameGeometry()
         frame_geometry.moveCenter(screen_geometry)
         self.move(frame_geometry.topLeft())
 
     def create_charge_inputs(self):
-        """
-        Создает поля ввода для зарядов.
-        """
         try:
             num_charges = int(self.num_charges_input.text())
             if num_charges <= 0:
                 raise ValueError("Количество зарядов должно быть положительным числом.")
 
-            # Удаляем старые поля ввода
             for i in reversed(range(self.charges_layout.count())):
                 widget = self.charges_layout.itemAt(i).widget()
                 if widget:
@@ -89,7 +73,6 @@ class ChargeFieldSimulator(QMainWindow):
 
             self.charge_entries = []
 
-            # Создаем новые поля ввода
             for i in range(num_charges):
                 label = QLabel(f"Заряд {i + 1}:")
                 x_input = QLineEdit()
@@ -120,9 +103,6 @@ class ChargeFieldSimulator(QMainWindow):
             QMessageBox.critical(self, "Ошибка", str(e))
 
     def validate_and_simulate(self):
-        """
-        Проверяет данные и строит график.
-        """
         charges = []
         allowed_colors = {"red", "green", "blue", "yellow"}
         try:
