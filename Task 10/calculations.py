@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_field(charges):
-    # Создаем сетку точек
     x = np.linspace(-5, 5, 300)
     y = np.linspace(-5, 5, 300)
     X, Y = np.meshgrid(x, y)
