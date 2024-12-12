@@ -18,17 +18,3 @@ def calculate_field(X, Y, charges):
         V += q / r
 
     return Ex, Ey, V
-
-
-def calculate_dipole_effect(X, Y, Ex, Ey, dipole):
-    dipole_x, dipole_y = dipole["pos"]
-    px, py = dipole["moment"]
-
-    dipole_ex = np.interp(dipole_x, X[0], Ex[:, 0])
-    dipole_ey = np.interp(dipole_y, Y[:, 0], Ey[0, :])
-
-    force_x = px * dipole_ex
-    force_y = py * dipole_ey
-    torque = px * dipole_ey - py * dipole_ex
-
-    return force_x, force_y, torque
