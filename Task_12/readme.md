@@ -67,7 +67,7 @@ V = \text{const}
 1. Убедитесь, что у вас установлен Python версии 3.8 или выше.
 2. Установите зависимости:
    ```bash
-   pip install pyqt5 matplotlib numpy
+   pip install requirments.txt
    ```
 3. Скачайте код проекта и выполните запуск:
 
