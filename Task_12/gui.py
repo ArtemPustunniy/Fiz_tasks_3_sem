@@ -13,14 +13,16 @@ from PyQt5.QtWidgets import (
     QDesktopWidget,
 )
 from PyQt5.QtGui import QFont
-from calculations import calculate_field, calculate_dipole_effect
+from calculations import calculate_field
 import matplotlib.pyplot as plt
 
 
 class ChargeFieldSimulator(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Электростатическое поле")
+        self.setWindowTitle(
+            "Электростатическое поле с эквипотенциальными поверхностями"
+        )
         self.resize(800, 600)
 
         self.center_window()
@@ -55,30 +57,6 @@ class ChargeFieldSimulator(QMainWindow):
 
         self.charges_layout = QGridLayout()
         self.layout.addLayout(self.charges_layout)
-
-        self.dipole_label = QLabel("Параметры диполя:")
-        self.dipole_label.setFont(QFont("Arial", 12))
-        self.dipole_layout = QHBoxLayout()
-
-        self.dipole_x_input = QLineEdit()
-        self.dipole_x_input.setPlaceholderText("x (позиция диполя)")
-
-        self.dipole_y_input = QLineEdit()
-        self.dipole_y_input.setPlaceholderText("y (позиция диполя)")
-
-        self.dipole_px_input = QLineEdit()
-        self.dipole_px_input.setPlaceholderText("px (момент по x)")
-
-        self.dipole_py_input = QLineEdit()
-        self.dipole_py_input.setPlaceholderText("py (момент по y)")
-
-        self.dipole_layout.addWidget(self.dipole_label)
-        self.dipole_layout.addWidget(self.dipole_x_input)
-        self.dipole_layout.addWidget(self.dipole_y_input)
-        self.dipole_layout.addWidget(self.dipole_px_input)
-        self.dipole_layout.addWidget(self.dipole_py_input)
-
-        self.layout.addLayout(self.dipole_layout)
 
         self.simulate_button = QPushButton("Запустить симуляцию")
         self.simulate_button.setStyleSheet(
@@ -166,61 +144,30 @@ class ChargeFieldSimulator(QMainWindow):
                 break
 
         if not has_error:
-            try:
-                dipole_x = float(self.dipole_x_input.text().strip())
-                dipole_y = float(self.dipole_y_input.text().strip())
-                dipole_px = float(self.dipole_px_input.text().strip())
-                dipole_py = float(self.dipole_py_input.text().strip())
-                dipole = {"pos": (dipole_x, dipole_y), "moment": (dipole_px, dipole_py)}
-            except ValueError:
-                QMessageBox.critical(
-                    self,
-                    "Ошибка",
-                    "Все поля для диполя должны быть заполнены и корректны.",
-                )
-                return
+            self.plot_field(charges)
 
-            self.plot_field(charges, dipole)
-
-    def plot_field(self, charges, dipole):
+    def plot_field(self, charges):
         x = np.linspace(-5, 5, 300)
         y = np.linspace(-5, 5, 300)
         X, Y = np.meshgrid(x, y)
 
         Ex, Ey, V = calculate_field(X, Y, charges)
 
-        force_x, force_y, torque = calculate_dipole_effect(X, Y, Ex, Ey, dipole)
+        E = np.sqrt(Ex**2 + Ey**2)
 
         plt.figure(figsize=(10, 8))
         plt.streamplot(
-            X,
-            Y,
-            Ex,
-            Ey,
-            color=np.log(np.sqrt(Ex**2 + Ey**2) + 1),
-            linewidth=1.5,
-            cmap="hsv",
-            density=2.0,
+            X, Y, Ex, Ey, color=np.log(E + 1), linewidth=1.5, cmap="hsv", density=2.0
         )
         plt.contour(X, Y, V, levels=50, cmap="coolwarm", alpha=0.7)
-        plt.colorbar(label="Магнитуда электрического поля (логарифм)")
+        plt.colorbar(label="Электрический потенциал")
 
         for charge in charges:
             x0, y0 = charge["pos"]
             plt.scatter(x0, y0, color="red", s=200, edgecolor="black")
 
-        plt.quiver(
-            dipole["pos"][0],
-            dipole["pos"][1],
-            force_x,
-            force_y,
-            color="blue",
-            scale=10,
-            label="Сила на диполь",
-        )
-        plt.title(f"Электростатическое поле и диполь\\nМомент силы: {torque:.2e}")
+        plt.title("Электростатическое поле и эквипотенциальные поверхности")
         plt.xlabel("x")
         plt.ylabel("y")
-        plt.legend()
         plt.grid()
         plt.show()
