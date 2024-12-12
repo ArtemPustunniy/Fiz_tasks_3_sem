@@ -1,4 +1,4 @@
-https://drive.google.com/file/d/1_ENiAdT3UzikkpjMnKbFSp3qtRM8rzA2/view?usp=sharing
+https://drive.google.com/file/d/16GBpn2XX4bYrlv6lKbhPCrbnO-xBpjmf/view?usp=sharing
 !!!ВАЖНО!!!
 При запуске exe файла, вместе с ним открывается терминал(окно с чёрным фоном)
 Если при открытии exe файла программа зависла, то нужно перенести курсор мыши в него и нажать любую клавишу на клавиатуре 
